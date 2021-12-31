@@ -389,6 +389,11 @@
       thisCart.dom.productList.addEventListener('remove', function(event){
         thisCart.remove(event.detail.cartProduct);
       });
+
+      thisCart.dom.form.addEventListener('submit', function(event){
+        event.preventDefault();
+        thisCart.sendOrder();
+      });
     }
 
     add(menuProduct){
@@ -420,36 +425,39 @@
       thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
       thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
       thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
+      thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
+      thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
+      thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
     }
 
     update(){
       const thisCart = this;
       // cena dostawy
-      let deliveryFee = settings.cart.defaultDeliveryFee;
+      thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
 
-      let totalNumber = 0;
+      thisCart.totalNumber = 0;
       // łączna cena
-      let subtotalPrice = 0;
+      thisCart.subtotalPrice = 0;
 
       for(const product of thisCart.products){
-        totalNumber = totalNumber + product.amount;
-        subtotalPrice = subtotalPrice + product.price * product.amount;
+        thisCart.totalNumber = thisCart.totalNumber + product.amount;
+        thisCart.subtotalPrice = thisCart.subtotalPrice + product.price * product.amount;
       }
 
-      if (totalNumber === 0){
-        deliveryFee = 0;
+      if (thisCart.totalNumber === 0){
+        thisCart.deliveryFee = 0;
         thisCart.totalPrice = 0;
       } else {
-        thisCart.totalPrice = subtotalPrice + deliveryFee;
+        thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
       }
 
       for (let price of thisCart.dom.totalPrice) {
         price.innerHTML = thisCart.totalPrice;
       }
 
-      thisCart.dom.deliveryFee.innerHTML = deliveryFee; 
-      thisCart.dom.totalNumber.innerHTML = totalNumber;
-      thisCart.dom.subtotalPrice.innerHTML = subtotalPrice;
+      thisCart.dom.deliveryFee.innerHTML = thisCart.deliveryFee; 
+      thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
+      thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
       thisCart.dom.totalPrice.innerHTML = thisCart.totalPrice;
     }
 
@@ -460,6 +468,34 @@
       product.dom.wrapper.remove();
       thisCart.products.splice(indexProduct,1);
       thisCart.update();
+    }
+
+    sendOrder(){
+      const thisCart = this;
+      // adres endpointu z którym się łączymy
+      const url = settings.db.url + '/' + settings.db.orders;
+      // obiekt, dzięki któremu będziemy wysyłać dane do serwera
+      const payload = {};
+      payload.address = thisCart.dom.address.value;
+      payload.phone = thisCart.dom.phone.value;
+      payload.totalPrice = thisCart.totalPrice;
+      payload.subtotalPrice = thisCart.subtotalPrice;
+      payload.totalNumber = thisCart.totalNumber;
+      payload.deliveryFee = thisCart.deliveryFee;
+      payload.products = [];
+      console.log(payload);
+      for(let prod of thisCart.products) {
+        payload.products.push(prod.getData());
+      }
+      // wysyłanie do serwera
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      };
+      fetch(url, options);
     }
   }
 
@@ -525,6 +561,20 @@
         thisCartProduct.remove();
         console.log(thisCartProduct);
       });
+    }
+
+    getData(){
+      const thisCartProduct = this;
+      const productData = {};
+      
+      productData.id = thisCartProduct.id;
+      productData.amount = thisCartProduct.amount;
+      productData.price = thisCartProduct.price;
+      productData.priceSingle = thisCartProduct.priceSingle;
+      productData.name = thisCartProduct.name;
+      productData.params = thisCartProduct.params;
+    
+      return productData;
     }
   }
 
