@@ -68,7 +68,7 @@ class Product{
 
   initOrderForm(){
     const thisProduct = this;
-    console.log('initOrderForm');
+    //console.log('initOrderForm');
 
     thisProduct.form.addEventListener('submit', function(event){
       event.preventDefault();
@@ -165,7 +165,7 @@ class Product{
     const event = new CustomEvent('add-to-cart', {
       bubbles: true,
       detail: {
-        product: thisProduct,
+        product: thisProduct.prepareCartProduct(),
       },
     });
 
