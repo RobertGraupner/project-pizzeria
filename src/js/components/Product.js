@@ -122,13 +122,13 @@ class Product{
         } else {
           // check if the option is default
           if(option.default == true) {
-          // reduce price variable
+            // reduce price variable
             price -= option.price;
           }
         }
 
         if(optionImage) {
-          console.log(optionImage);
+          //console.log(optionImage);
 
           if(optionSelected) {
             optionImage.classList.add(classNames.menuProduct.imageVisible);
