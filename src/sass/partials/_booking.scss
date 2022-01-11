@@ -188,6 +188,9 @@
         opacity: 0.4;
       }
     }
+    &.selected {
+      background-color: lightgreen;
+    }
   }
 
   [data-table="1"] {
