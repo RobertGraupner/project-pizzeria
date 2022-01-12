@@ -260,8 +260,8 @@ class Booking {
     const url = settings.db.url + '/' + settings.db.bookings;
     // obiekt, dzięki któremu będziemy wysyłać dane do serwera
     const payload = {};
-    payload.data = thisBooking.dom.datePicker.value;
-    payload.hour = thisBooking.dom.hourPicker.value;
+    payload.date = thisBooking.datePicker.value;
+    payload.hour = thisBooking.hourPicker.value;
     payload.table = thisBooking.tableSelected;
     payload.duration = thisBooking.hoursAmount.value;
     payload.ppl = thisBooking.peopleAmount.value;
@@ -277,7 +277,7 @@ class Booking {
     console.log(payload);
     thisBooking.send(url, payload);
 
-    thisBooking.makeBooked(payload.data, payload.hour, payload.duration, payload.table);
+    thisBooking.makeBooked(payload.date, payload.hour, payload.duration, payload.table);
   }
   send(url, payload){
     // wysyłanie do serwera
