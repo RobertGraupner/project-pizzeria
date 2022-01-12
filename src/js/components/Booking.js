@@ -8,7 +8,7 @@ class Booking {
   constructor(element) {
     const thisBooking = this;
 
-    thisBooking.tableSelected = '';
+    thisBooking.tableSelected;
 
     thisBooking.render(element);
     thisBooking.initWidgets();
@@ -214,6 +214,7 @@ class Booking {
 
     thisBooking.dom.wrapper.addEventListener('updated', function () {
       thisBooking.updateDOM();
+      thisBooking.removeTableSelection();
     });
 
     thisBooking.dom.floorPlan.addEventListener('click', function (event) {
@@ -235,13 +236,13 @@ class Booking {
     ) {
       if (!event.target.classList.contains('selected')) {
         event.target.classList.add('selected');
-        thisBooking.tableSelected = event.target.getAttribute('data-table');
+        thisBooking.tableSelected = parseInt(event.target.getAttribute('data-table'));
       } else {
         event.target.classList.remove('selected');
         thisBooking.tableSelected = '';
       }
       for (let table of thisBooking.dom.tables) {
-        let activeTable = table.getAttribute(settings.booking.tableIdAttribute);
+        let activeTable = parseInt(table.getAttribute(settings.booking.tableIdAttribute));
         if (activeTable !== thisBooking.tableSelected) {
           table.classList.remove('selected');
         }
@@ -251,6 +252,13 @@ class Booking {
 			event.target.classList.contains(classNames.booking.tableBooked)
     ) {
       window.alert('This table is unavailable');
+    }
+  }
+
+  removeTableSelection(){
+    const thisBooking = this;
+    for (let table of thisBooking.dom.tables) {
+      table.classList.remove('selected');
     }
   }
 
@@ -269,7 +277,7 @@ class Booking {
     payload.phone = thisBooking.dom.phone.value;
     payload.address = thisBooking.dom.address.value;
 
-    for (let starter in thisBooking.starters){ 
+    for (let starter of thisBooking.dom.starters){ 
       if (starter.checked){
         payload.starters.push(starter.value);
       }
