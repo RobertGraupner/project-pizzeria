@@ -2,9 +2,9 @@ import {settings, select, classNames} from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
 import Booking from './components/Booking.js';
+import Home from './components/Home.js';
 
 const app = {
-
   initBooking: function () {
     const thisApp = this;
 
@@ -17,7 +17,8 @@ const app = {
 
     thisApp.pages = document.querySelector(select.containerOf.pages).children;
     thisApp.navLinks = document.querySelectorAll(select.nav.links);
-		
+    thisApp.pageLinks = document.querySelectorAll('.link a');
+
     const idFromHash = window.location.hash.replace('#/', '');
     //console.log('idFromHash', idFromHash);
 
@@ -32,8 +33,20 @@ const app = {
     //console.log('pageMatchingHash', pageMatchingHash);
     thisApp.activatePage(pageMatchingHash);
 
+    for (let link of thisApp.pageLinks) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        const clickedLink = this;
+        const id = clickedLink.getAttribute('href').replace('#', '');
+
+        thisApp.activatePage(id);
+
+        window.location.hash = '#/' + id;
+      });
+    }
+
     for (let link of thisApp.navLinks) {
-      link.addEventListener('click', function(event) {
+      link.addEventListener('click', function (event) {
         const clickedElement = this;
         event.preventDefault();
 
@@ -109,12 +122,13 @@ const app = {
     //console.log('settings:', settings);
     //console.log('templates:', templates);
 
-    thisApp.initPages();
+    //thisApp.initPages();
     thisApp.initData();
     //thisApp.initMenu(); -> usuwamy i dajemy do parsedResponse
     app.initCart();
     app.initBooking();
-   
+    thisApp.initHome();
+    thisApp.initPages();
   },
   // instancja klasy Card
   initCart: function () {
@@ -128,6 +142,14 @@ const app = {
     thisApp.productList.addEventListener('add-to-cart', function (event) {
       app.cart.add(event.detail.product);
     });
+  },
+
+  initHome: function () {
+    const thisApp = this;
+
+    const homeElem = document.querySelector(select.containerOf.home);
+
+    thisApp.home = new Home(homeElem);
   },
 };
 
