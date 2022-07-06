@@ -1,3 +1,3 @@
-version 2.4
+# Pizzeria
 
-https://arcane-citadel-38907.herokuapp.com/
+Strona pizzerii wykonana przy pomocy HTML, CSS, SASS i JS [Pizzeria](https://arcane-citadel-38907.herokuapp.com/)
